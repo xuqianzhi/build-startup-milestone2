@@ -18,7 +18,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton onClick={()=>{console.log("pde")}}>
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>

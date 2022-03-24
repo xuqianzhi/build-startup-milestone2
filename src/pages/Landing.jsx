@@ -6,41 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import PaidIcon from '@mui/icons-material/Paid';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import logo from '../logo.jpg';
-
-const FeatureCard = ({ title, content, iconClass }) => {
-
-  var Icon;
-  if (iconClass == "PaidIcon") {
-    Icon = PaidIcon;
-  } else if (iconClass == "DocumentScannerIcon") {
-    Icon = DocumentScannerIcon;
-  } else if (iconClass == "EngineeringIcon") {
-    Icon = EngineeringIcon;
-  } else {
-    Icon = Grid;
-  }
-
-  return (
-    <Stack direction='column' alignItems='center'>
-
-      <Icon sx={{ width: 100, height: 100, margin: '10px', color: "secondary.main" }}></Icon>
-
-      <Typography variant="h5" padding={2} fontWeight="bold" textAlign='center'>
-        {title}
-      </Typography>
-
-      <Typography variant="h5" padding={2} textAlign='center' margin='20px'>
-        {content}
-      </Typography>
-
-      <ButtonPrimary>
-        Learn More
-      </ButtonPrimary>
-
-    </Stack>
-  )
-}
+import DomainAddIcon from '@mui/icons-material/DomainAdd';
 
 export default class Landing extends Component {
   constructor(props) {
@@ -56,7 +22,7 @@ export default class Landing extends Component {
         <ThemeProvider theme={theme}>
           {/* Top Board */}
           <Grid container sx={{ backgroundColor: "background.main", width: this.windowWidth, height: '500px' }}>
-            <Grid container width='40%' direction='column' justifyContent='center' paddingLeft={4} >
+            <Grid container width='40%' direction='column' justifyContent='center' paddingLeft='140px' >
               <Typography variant="h3" padding={1} fontWeight='bold'>
                 Residential
               </Typography>
@@ -69,8 +35,11 @@ export default class Landing extends Component {
                 Main Features in Residential Management Software
               </Typography>
             </Grid>
-            <Grid container width='60%' direction='column' justifyContent='center' alignItems='center'>
+            {/* <Grid container width='60%' direction='column' justifyContent='center' alignItems='center'>
               <img width='400px' height='400px' src={logo}></img>
+            </Grid> */}
+            <Grid container width='60%' direction='column' justifyContent='center' alignItems='center'>
+              <DomainAddIcon sx={{width: '400px', height: '400px', color: 'primary.main'}}></DomainAddIcon>
             </Grid>
           </Grid>
 
@@ -118,4 +87,38 @@ export default class Landing extends Component {
       </div>
     );
   }
+}
+
+const FeatureCard = ({ title, content, iconClass }) => {
+
+  var Icon;
+  if (iconClass == "PaidIcon") {
+    Icon = PaidIcon;
+  } else if (iconClass == "DocumentScannerIcon") {
+    Icon = DocumentScannerIcon;
+  } else if (iconClass == "EngineeringIcon") {
+    Icon = EngineeringIcon;
+  } else {
+    Icon = Grid;
+  }
+
+  return (
+    <Stack direction='column' alignItems='center'>
+
+      <Icon sx={{ width: 100, height: 100, margin: '10px', color: "secondary.main" }}></Icon>
+
+      <Typography variant="h5" padding={2} fontWeight="bold" textAlign='center'>
+        {title}
+      </Typography>
+
+      <Typography variant="h5" padding={2} textAlign='center' margin='20px'>
+        {content}
+      </Typography>
+
+      <ButtonPrimary>
+        Learn More
+      </ButtonPrimary>
+
+    </Stack>
+  )
 }
