@@ -11,21 +11,22 @@ import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Container from "@mui/material/Container";
 
-const handleSubmit = (event) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  signIn(data.get("email"), data.get("password"));
-  // console.log({
-  //   email: data.get("email"),
-  //   password: data.get("password"),
-  // });
-};
-
 export default class Signin extends Component {
   constructor(props) {
     super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
     this.userType = props.userType;
-    this.state = {};
+    this.handleUserSignIn = props.handleUserSignIn;
+    this.state = {}
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = data.get("email");
+    const password = data.get("password");
+    this.handleUserSignIn(email, password, this.userType);
   }
 
   render() {
@@ -55,7 +56,7 @@ export default class Signin extends Component {
             </Typography>
             <Box
               component="form"
-              onSubmit={handleSubmit}
+              onSubmit={this.handleSubmit}
               noValidate
               sx={{ mt: 1 }}
             >
