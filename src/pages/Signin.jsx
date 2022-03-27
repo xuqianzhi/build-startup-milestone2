@@ -2,7 +2,7 @@ import React, { Component, useState } from "react";
 import { Grid, Typography, Box } from "@mui/material";
 import { theme, ButtonPrimary } from "./Style.jsx";
 import { ThemeProvider } from "@mui/material/styles";
-import { signIn } from "../Firebase.js"
+import { signIn } from "../Firebase.js";
 
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,10 +15,6 @@ const handleSubmit = (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   signIn(data.get("email"), data.get("password"));
-  // console.log({
-  //   email: data.get("email"),
-  //   password: data.get("password"),
-  // });
 };
 
 export default class Signin extends Component {
