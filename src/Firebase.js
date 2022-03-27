@@ -9,17 +9,9 @@ const firebaseConfig = {
   messagingSenderId: "748563665138",
   appId: "1:748563665138:web:0b3a9baeaff9295fb0006b",
 };
-<<<<<<< HEAD
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-function signIn(email, password) {
-=======
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
->>>>>>> 98d35620ea51e13908e87a55581950e36b599403
 
 function signIn(email, password) {
   console.log(auth.createSessionCookie);
