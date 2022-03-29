@@ -2,7 +2,6 @@ import React, { Component, useState } from "react";
 import { Grid, Typography, Box } from "@mui/material";
 import { theme, ButtonPrimary } from "./Style.jsx";
 import { ThemeProvider } from "@mui/material/styles";
-import { signIn } from "../Firebase.js";
 
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,12 +10,6 @@ import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Container from "@mui/material/Container";
 
-const handleSubmit = (event) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  signIn(data.get("email"), data.get("password"));
-};
-
 export default class Signin extends Component {
   constructor(props) {
     super(props);
@@ -24,10 +17,13 @@ export default class Signin extends Component {
 
     this.userType = props.userType;
     this.handleUserSignIn = props.handleUserSignIn;
-    this.state = {}
+    this.state = {
+      errorMessage: "",
+    };
   }
 
   handleSubmit(event) {
+    // TODO: handle error
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
@@ -41,6 +37,7 @@ export default class Signin extends Component {
       this.userType == "tenant" ? "/signin/landlord" : "/signin/tenant";
     const alternativeSigninText =
       this.userType == "tenant" ? "Sign in as landlord" : "Sign in as tenant";
+    const errorMessage = this.state.errorMessage;
 
     return (
       <ThemeProvider theme={theme}>
@@ -94,6 +91,12 @@ export default class Signin extends Component {
               >
                 Sign In
               </ButtonPrimary>
+              <Typography
+                id="signin-error"
+                sx={{ color: "red", textDecoration: "underline" }}
+              >
+                {errorMessage}
+              </Typography>
               <Grid container>
                 <Grid item xs>
                   <Link href="/signup" variant="body2">

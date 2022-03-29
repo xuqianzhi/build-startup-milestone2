@@ -21,7 +21,7 @@ export default class Navbar extends Component {
               <img src={logo}><img/>
             </Typography> */}
             <Grid  sx={{ flexGrow: 1 }}>
-              <img style={{width: '100px', height: '100px'}} src={logo}></img>
+              <img style={{width: '70px', height: '80px'}} src={logo}></img>
             </Grid>
             <ButtonSecondary variant="contained" href="/signin/tenant">
               Sign in

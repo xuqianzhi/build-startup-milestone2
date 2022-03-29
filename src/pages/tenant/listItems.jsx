@@ -10,9 +10,17 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import Rent from "./Rent";
+import Profile from './Profile';
 
 export const mainListItems = (changeDisplay, handleUserSignOut) => (
   <React.Fragment>
+    {/* <ListItemButton  >
+      <ListItemIcon>
+        <EngineeringIcon />
+      </ListItemIcon>
+      <ListItemText primary="Dashboard" />
+    </ListItemButton> */}
+
     <ListItemButton onClick={() => (changeDisplay(Maintenance))} >
       <ListItemIcon>
         <EngineeringIcon />
@@ -25,7 +33,7 @@ export const mainListItems = (changeDisplay, handleUserSignOut) => (
       </ListItemIcon>
       <ListItemText primary="Rent" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton onClick={() => (changeDisplay(Profile))}>
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
