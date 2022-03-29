@@ -15,6 +15,7 @@ export default class Navbar extends Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
+        <Navbar></Navbar>
         <AppBar color="background" position="static">
           <Toolbar color="primary" variant="dense">
             {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

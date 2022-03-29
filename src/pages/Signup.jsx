@@ -3,6 +3,7 @@ import { theme, ButtonPrimary } from "./Style.jsx";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
+import Navbar from "./Navbar.jsx";
 import {
   FormControlLabel,
   FormControl,
@@ -47,6 +48,7 @@ export default class Signup extends Component {
     const errorMessage = this.state.errorMessage;
     return (
       <ThemeProvider theme={theme}>
+        <Navbar></Navbar>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box

@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import { Grid, Typography, Box } from "@mui/material";
 import { theme, ButtonPrimary } from "./Style.jsx";
 import { ThemeProvider } from "@mui/material/styles";
+import Navbar from "./Navbar.jsx";
 
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -41,6 +42,7 @@ export default class Signin extends Component {
 
     return (
       <ThemeProvider theme={theme}>
+        <Navbar></Navbar>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
