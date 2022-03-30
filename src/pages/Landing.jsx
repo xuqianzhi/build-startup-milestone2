@@ -7,6 +7,7 @@ import PaidIcon from "@mui/icons-material/Paid";
 import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import EngineeringIcon from "@mui/icons-material/Engineering";
 import DomainAddIcon from "@mui/icons-material/DomainAdd";
+import logo from '../logo.jpg';
 
 export default class Landing extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ export default class Landing extends Component {
   render() {
     return (
       <div>
-        <Navbar></Navbar>
+        <Navbar shouldShowSignIn={true} ></Navbar>
         <ThemeProvider theme={theme}>
           {/* Top Board */}
           <Grid
@@ -63,9 +64,10 @@ export default class Landing extends Component {
               justifyContent="center"
               alignItems="center"
             >
-              <DomainAddIcon
+              <img src={logo} style={{width: '250px', height: '300px'}}></img>
+              {/* <DomainAddIcon
                 sx={{ width: "400px", height: "400px", color: "primary.main" }}
-              ></DomainAddIcon>
+              ></DomainAddIcon> */}
             </Grid>
           </Grid>
 

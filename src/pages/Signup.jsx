@@ -48,7 +48,7 @@ export default class Signup extends Component {
     const errorMessage = this.state.errorMessage;
     return (
       <ThemeProvider theme={theme}>
-        <Navbar></Navbar>
+        <Navbar shouldShowSignIn={false} ></Navbar>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box

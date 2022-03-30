@@ -42,7 +42,7 @@ export default class Signin extends Component {
 
     return (
       <ThemeProvider theme={theme}>
-        <Navbar></Navbar>
+        <Navbar shouldShowSignIn={false} ></Navbar>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
