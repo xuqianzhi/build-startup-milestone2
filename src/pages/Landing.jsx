@@ -64,10 +64,10 @@ export default class Landing extends Component {
               justifyContent="center"
               alignItems="center"
             >
-              <img src={logo} style={{width: '250px', height: '300px'}}></img>
-              {/* <DomainAddIcon
+              {/* <img src={logo} style={{width: '250px', height: '300px'}}></img> */}
+              <DomainAddIcon
                 sx={{ width: "400px", height: "400px", color: "primary.main" }}
-              ></DomainAddIcon> */}
+              ></DomainAddIcon>
             </Grid>
           </Grid>
 
