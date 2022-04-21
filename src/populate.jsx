@@ -59,6 +59,7 @@ async function populateAll() {
     const maintenancesId = await populateMaintenance();
     const buildingsId = await populateBuilding(2);
     const tenantsId = await populateTenant(buildingsId, 20);
+    const landlordsId = await populateLandlord(buildingsId, 3);
     const vendorsId = await populateVendor(3);
     const requestsId = await populateRequest(8, tenantsId, vendorsId, maintenancesId);
 
@@ -66,7 +67,8 @@ async function populateAll() {
         ${maintenancesId.length} maintenances, 
         ${buildingsId.length} buildings,
         ${tenantsId.length} tenants, 
-        ${vendorsId.length} vendors, 
+        ${vendorsId.length} vendors,
+        ${landlordsId.length} landlords, 
         ${requestsId.length} requests.`)
 }
 
@@ -106,7 +108,7 @@ async function populateTenant(buildings, count) {
     const data = []
     for (let i = 1; i <= count; i++) {
         const docRef = await addDoc(collection(db, "tenant"), {
-            name: "tenant" + i,
+            email: `tenant${i}@gmail.com`,
             buildingId: getRandomElementFromArray(buildings),
             room: generateRandomInteger(1000, 10000).toString(),
             phoneNumber: `${generateRandomInteger(100, 1000)}-${generateRandomInteger(100, 1000)}-${generateRandomInteger(1000, 10000)}`,
@@ -115,6 +117,21 @@ async function populateTenant(buildings, count) {
         data.push(docId);
     }
     console.log("successfully populated tenant: ", data);
+    return data;
+}
+
+async function populateLandlord(buildings, count) {
+    const data = []
+    for (let i = 1; i <= count; i++) {
+        const docRef = await addDoc(collection(db, "landlord"), {
+            email: `landlord${i}@gmail.com`,
+            buildings: [getRandomElementFromArray(buildings)],
+            phoneNumber: `${generateRandomInteger(100, 1000)}-${generateRandomInteger(100, 1000)}-${generateRandomInteger(1000, 10000)}`,
+        });
+        const docId = docRef.id;
+        data.push(docId);
+    }
+    console.log("successfully populated landlord: ", data);
     return data;
 }
 

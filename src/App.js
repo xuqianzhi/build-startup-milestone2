@@ -11,28 +11,21 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import {
-  getDoc,
-  setDoc,
-  addDoc,
-  collection,
-  doc,
-} from "firebase/firestore";
-import { auth, db } from './firebase.js';
+import { getDoc, setDoc, addDoc, collection, doc } from "firebase/firestore";
+import { auth, db } from "./firebase.js";
 import { populateData } from "./populate";
 
 const setSignInLocalStorage = (signInType, userEmail, userId) => {
   window.localStorage.setItem("signInType", signInType);
   window.localStorage.setItem("userEmail", userEmail);
   window.localStorage.setItem("signInId", userId);
-}
+};
 
 const removeSignInLocalStorage = () => {
   window.localStorage.removeItem("signInType");
   window.localStorage.removeItem("userEmail");
   window.localStorage.removeItem("signInId");
-}
-
+};
 
 class App extends Component {
   constructor() {
@@ -47,7 +40,7 @@ class App extends Component {
     const signInType = window.localStorage.getItem("signInType");
     this.state = {
       signInType: signInType,
-      userEmail: ""
+      userEmail: "",
     };
   }
 
@@ -58,21 +51,17 @@ class App extends Component {
         // Signed in
         const user = userCredential.user;
         const uid = user.uid;
-        const userDocRef = doc(db, "users", uid);
+        const userDocRef = doc(db, signInType, uid);
         const docSnap = await getDoc(userDocRef);
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          const role = data.role;
-          if (role === signInType) {
-            // perform signin
-            setSignInLocalStorage(signInType, email, uid);
-            this.setState({ signInType: signInType, userEmail: email });
-            window.location.href = `/dashboard/${signInType}`;
-          } else {
-            throw { message: "Sign in role does not match your actual role" };
-          }
+          // perform signin
+          setSignInLocalStorage(signInType, email, uid);
+          this.setState({ signInType: signInType, userEmail: email });
+          window.location.href = `/dashboard/${signInType}`;
         } else {
-          throw { message: "User not found" };
+          throw {
+            message: "User not found. Are you signing in as the correct role?",
+          };
         }
       })
       .catch((error) => {
@@ -83,17 +72,38 @@ class App extends Component {
   }
 
   handleUserSignUp(email, password, signUpType) {
+    const generateRandomInteger = (min, max) => {
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+  
+    const generateRandomPhoneNumber = () => {
+      return `${generateRandomInteger(100, 1000)}-${generateRandomInteger(
+        100,
+        1000
+      )}-${generateRandomInteger(1000, 10000)}`;
+    }
+
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         this.signupElement.current.setState({ errorMessage: "" });
         const user = userCredential.user;
         const uid = user.uid;
         console.log(user.email, uid);
-        const userDoc = doc(db, "users", uid);
-        await setDoc(userDoc, {
-          email: email,
-          role: signUpType,
-        });
+        const userDoc = doc(db, signUpType, uid);
+        if (signUpType === "tenant") {
+          await setDoc(userDoc, {
+            email: email,
+            buildingId: "mHCmVHZhqnNKue9uWMCQ", // prototype purpose, all tenant belong to buildling 1
+            phoneNumber: generateRandomPhoneNumber(),
+            room: generateRandomInteger(100, 10000)
+          });
+        } else {
+          await setDoc(userDoc, {
+            email: email,
+            buildings: ["mHCmVHZhqnNKue9uWMCQ"], // prototype purpose, all landlord own buildling 1
+            phoneNumber: generateRandomPhoneNumber(),
+          });
+        }
         // sign in user
         setSignInLocalStorage(signUpType, email, uid);
         this.setState({ signInType: signUpType, userEmail: email });
@@ -169,10 +179,7 @@ class App extends Component {
               path="dashboard/tenant"
               element={this.ifUserSignedIn(DashboardTenant, "tenant")}
             />
-            <Route
-              path="populate"
-              element={populateData()}
-            />
+            <Route path="populate" element={populateData()} />
           </Routes>
         </BrowserRouter>
       </div>
