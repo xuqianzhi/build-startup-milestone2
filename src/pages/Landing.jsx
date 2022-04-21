@@ -12,7 +12,7 @@ import logo from '../logo.jpg';
 export default class Landing extends Component {
   constructor(props) {
     super(props);
-    this.windowWidth = window.screen.width;
+    this.windowWidth = window.innerWidth;
     this.state = {};
   }
 

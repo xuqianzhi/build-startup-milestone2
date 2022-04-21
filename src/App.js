@@ -7,31 +7,32 @@ import DashboardLandlord from "./pages/landlord/DashboardLandlord.jsx";
 import DashboardTenant from "./pages/tenant/DashboardTenant.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { Component } from "react";
-import { initializeApp } from "firebase/app";
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import {
-  getFirestore,
   getDoc,
   setDoc,
+  addDoc,
+  collection,
   doc,
 } from "firebase/firestore";
+import { auth, db } from './firebase.js';
+import { populateData } from "./populate";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDx0Mevlnf4oDjDYidM2EzkOiOpXHoiZBo",
-  authDomain: "xqz-cs5356.firebaseapp.com",
-  projectId: "xqz-cs5356",
-  storageBucket: "xqz-cs5356.appspot.com",
-  messagingSenderId: "748563665138",
-  appId: "1:748563665138:web:8a7fbbfcecedf8a0b0006b"
-};
+const setSignInLocalStorage = (signInType, userEmail, userId) => {
+  window.localStorage.setItem("signInType", signInType);
+  window.localStorage.setItem("userEmail", userEmail);
+  window.localStorage.setItem("signInId", userId);
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const removeSignInLocalStorage = () => {
+  window.localStorage.removeItem("signInType");
+  window.localStorage.removeItem("userEmail");
+  window.localStorage.removeItem("signInId");
+}
+
 
 class App extends Component {
   constructor() {
@@ -64,8 +65,7 @@ class App extends Component {
           const role = data.role;
           if (role === signInType) {
             // perform signin
-            window.localStorage.setItem("signInType", signInType);
-            window.localStorage.setItem("userEmail", email);
+            setSignInLocalStorage(signInType, email, uid);
             this.setState({ signInType: signInType, userEmail: email });
             window.location.href = `/dashboard/${signInType}`;
           } else {
@@ -95,8 +95,7 @@ class App extends Component {
           role: signUpType,
         });
         // sign in user
-        window.localStorage.setItem("signInType", signUpType);
-        window.localStorage.setItem("userEmail", email);
+        setSignInLocalStorage(signUpType, email, uid);
         this.setState({ signInType: signUpType, userEmail: email });
         window.location.href = `/dashboard/${signUpType}`;
       })
@@ -109,8 +108,7 @@ class App extends Component {
 
   handleUserSignOut() {
     const type = window.localStorage.getItem("signInType");
-    window.localStorage.removeItem("signInType");
-    window.localStorage.removeItem("userEmail");
+    removeSignInLocalStorage();
     this.setState({ signInType: null, userEmail: "" });
     window.location.href = `/signin/${type}`;
   }
@@ -170,6 +168,10 @@ class App extends Component {
             <Route
               path="dashboard/tenant"
               element={this.ifUserSignedIn(DashboardTenant, "tenant")}
+            />
+            <Route
+              path="populate"
+              element={populateData()}
             />
           </Routes>
         </BrowserRouter>
