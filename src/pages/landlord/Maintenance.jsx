@@ -1,48 +1,24 @@
 import { Component } from "react";
-import { Grid, List, ListItemText, Divider, Chip, Box } from "@mui/material";
+import { Box, Grid, List, ListItemText, Divider, Chip, ThemeProvider, Typography } from "@mui/material";
 import { db } from "../../firebase.js";
+import { theme } from "../Style.jsx";
 import {
-  addDoc,
   collection,
   getDocs,
   getDoc,
-  setDoc,
+  updateDoc,
   doc,
 } from "firebase/firestore";
-
-// var data = [
-//   {
-//     title: "Plumbing and Bath",
-//     description:
-//       "Please help! My toilet water is brown, and the flush mechanism is not working! I even found a rat that came up in the tank in the process. " +
-//       "Please help! My toilet water is brown, and the flush mechanism is not working! I even found a rat that came up in the tank in the process. ",
-//     room: "20F",
-//     date: "03/15/2022",
-//     urgency: "high",
-//   },
-//   {
-//     title: "Common Area",
-//     description:
-//       "The outer pane of my window is broken. Some leaves and grime have been sticking on to it. Can this please be fixed? ",
-//     room: "21D",
-//     date: "03/15/2022",
-//     urgency: "medium",
-//   },
-//   {
-//     title: "Apartment Interior",
-//     description:
-//       "There are some scratches on my table and chair.  Was wondering if I could get a replacement. ",
-//     room: "3O",
-//     date: "03/15/2022",
-//     urgency: "low",
-//   },
-// ];
+import { ButtonPrimary } from "../Style.jsx";
+import { CloseRounded } from "@mui/icons-material";
+import { height } from "@mui/system";
 
 export default class Maintenance extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      openRequest: [],
+      closedRequest: []
     };
   }
 
@@ -51,27 +27,88 @@ export default class Maintenance extends Component {
   }
 
   async fetchRequest() {
-    let data = [];
+    // const openRequest = [
+    //   {
+    //     category: "category",
+    //     subCategory: "subCategory",
+    //     building: {
+    //       name: "building name",
+    //     },
+    //     room: "room",
+    //     description: "description",
+    //     dateCreated: new Date().toString(),
+    //     urgency: 0,
+    //     requestId: "testId"
+    //   },
+    //   {
+    //     category: "category",
+    //     subCategory: "subCategory",
+    //     building: {
+    //       name: "building name",
+    //     },
+    //     room: "room",
+    //     description: "description",
+    //     dateCreated: new Date().toString(),
+    //     urgency: 0,
+    //     requestId: "testId"
+    //   },
 
+    // ];
+
+    // const closedRequest = [
+    //   {
+    //     category: "category",
+    //     subCategory: "subCategory",
+    //     building: {
+    //       name: "building name",
+    //     },
+    //     room: "room",
+    //     description: "description",
+    //     dateCreated: new Date().toString(),
+    //     urgency: 0,
+    //     requestId: "testId"
+    //   },
+    //   {
+    //     category: "category",
+    //     subCategory: "subCategory",
+    //     building: {
+    //       name: "building name",
+    //     },
+    //     room: "room",
+    //     description: "description",
+    //     dateCreated: new Date().toString(),
+    //     urgency: 0,
+    //     requestId: "testId"
+    //   },
+    // ];
+
+    const openRequest = [];
+    const closedRequest = [];
     // helper function to fetch a firebase document data
     const fetchFirebseDoc = async (collecitonName, docId) => {
       const snapshot = await getDoc(doc(db, collecitonName, docId));
       return snapshot.data();
     };
 
+    const { buildings } = await fetchFirebseDoc("landlord", window.localStorage.getItem("signInId"));
+    const buildingSet = new Set(buildings);
+
     const requestSnapshot = await getDocs(collection(db, "request"));
 
     for (let i = 0; i < requestSnapshot.docs.length; i++) {
+      const requestId = requestSnapshot.docs[i].id;
       const requestData = requestSnapshot.docs[i].data();
-      const { tenantId, vendorId, maintenanceId, dateCreated, description } =
+      const { tenantId, vendorId, maintenanceId, dateCreated, description, isCompleted } =
         requestData;
       const { buildingId, room } = await fetchFirebseDoc("tenant", tenantId);
+      if (!buildingSet.has(buildingId)) {
+        continue;
+      }
       const building = await fetchFirebseDoc("building", buildingId);
       const { category, subCategory, urgency } = await fetchFirebseDoc(
         "maintenance",
         maintenanceId
       );
-      console.log(subCategory);
       const request = {
         category: category,
         subCategory: subCategory,
@@ -80,66 +117,143 @@ export default class Maintenance extends Component {
         description: description,
         dateCreated: dateCreated.toDate().toString(),
         urgency: urgency,
+        requestId: requestId,
       };
-      data.push(request);
+      isCompleted ? closedRequest.push(request) : openRequest.push(request);
     }
-    this.setState({ data: data });
+
+    this.setState({ closedRequest: closedRequest, openRequest: openRequest });
+  }
+
+  async markRequestResolved(requestId) {
+    console.log(requestId);
+    const requestDocRef = doc(db, "request", requestId);
+    try {
+      await updateDoc(requestDocRef, {
+        isCompleted: true
+      })
+      alert("Successfully mark request resolved");
+      window.location.reload();
+    } catch (err) {
+      alert(`Failed to mark request resolved: ${err}`);
+    }
   }
 
   render() {
-    const data = this.state.data;
-    const urgencyLevel = ["high", "medium", "low"];
+    const { closedRequest, openRequest } = this.state;
+    const urgencyLevel = ["high", "med", "low"];
     return (
-      <List component="div">
-        {data.map((request, idx) => {
-          let {
-            category,
-            subCategory,
-            building,
-            room,
-            description,
-            dateCreated,
-            urgency,
-          } = request;
-          const title = `${category}, ${subCategory}`;
-          const tenantLocation = `${building.name}, ${room}`
-          var buttonColor;
-          switch (urgency) {
-            case 0:
-              buttonColor = "red";
-              break;
-            case 1:
-              buttonColor = "orange";
-              break;
-            case 2:
-              buttonColor = "green";
-              break;
-            default:
-              buttonColor = "green";
-          }
-          return (
-            <div key={`maintenance-${idx}`}>
-              <Grid container sx={{ padding: "10px", width: "80vw" }}>
-                <Grid item xs={8}>
-                  <ListItemText
-                    primary={ title + " at " + tenantLocation}
-                    secondary={description}
-                  ></ListItemText>
-                  <ListItemText secondary={dateCreated}></ListItemText>
+      <ThemeProvider theme={theme}>
+        {/* Section for open request */}
+        <Typography component="div" variant="h4" padding={'10px'}
+          marginTop={'20px'} color={theme.palette.primary.main} >Open requests</Typography>
+        <List component="div">
+          {openRequest.map((request, idx) => {
+            let {
+              category,
+              subCategory,
+              building,
+              room,
+              description,
+              dateCreated,
+              urgency,
+              requestId,
+            } = request;
+            const title = `${category}, ${subCategory}`;
+            const tenantLocation = `${building.name}, ${room}`
+            var buttonColor;
+            switch (urgency) {
+              case 0:
+                buttonColor = "red";
+                break;
+              case 1:
+                buttonColor = "orange";
+                break;
+              case 2:
+                buttonColor = "green";
+                break;
+              default:
+                buttonColor = "green";
+            }
+            return (
+              <div key={`maintenance-${idx}`}>
+                <Grid container sx={{ padding: "10px", width: "80vw" }}>
+                  <Grid item xs={8}>
+                    <ListItemText
+                      primary={title + " at " + tenantLocation}
+                      secondary={description}
+                    ></ListItemText>
+                    <ListItemText secondary={dateCreated}></ListItemText>
+                  </Grid>
+                  <Grid item xs={2}></Grid>
+                  <Grid item xs={2}>
+                    <Chip
+                      label={urgencyLevel[urgency]}
+                      sx={{ backgroundColor: buttonColor, width: "50%", marginRight: '50px' }}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={3}></Grid>
-                <Grid item xs={1}>
-                  <Chip
-                    label={urgencyLevel[urgency]}
-                    sx={{ backgroundColor: buttonColor, width: "100%" }}
-                  />
+                <ButtonPrimary onClick={() => { this.markRequestResolved(requestId) }} sx={{ height: '30px', width: '150px', marginBottom: '20px' }} > Mark Resolved </ButtonPrimary>
+                <Divider></Divider>
+              </div>
+            );
+          })}
+        </List>
+
+        {/* Section for closed request */}
+        <Typography component="div" variant="h4" padding={'10px'}
+          marginTop={'30px'} color={theme.palette.secondary.main} >Closed requests</Typography>
+        <List component="div">
+          {closedRequest.map((request, idx) => {
+            let {
+              category,
+              subCategory,
+              building,
+              room,
+              description,
+              dateCreated,
+              urgency,
+            } = request;
+            const title = `${category}, ${subCategory}`;
+            const tenantLocation = `${building.name}, ${room}`
+            var buttonColor;
+            switch (urgency) {
+              case 0:
+                buttonColor = "red";
+                break;
+              case 1:
+                buttonColor = "orange";
+                break;
+              case 2:
+                buttonColor = "green";
+                break;
+              default:
+                buttonColor = "green";
+            }
+            return (
+              <div key={`maintenance-${idx}`}>
+                <Grid container sx={{ padding: "10px", width: "80vw" }}>
+                  <Grid item xs={8}>
+                    <ListItemText
+                      primary={title + " at " + tenantLocation}
+                      secondary={description}
+                    ></ListItemText>
+                    <ListItemText secondary={dateCreated}></ListItemText>
+                  </Grid>
+                  <Grid item xs={2}></Grid>
+                  <Grid item xs={2}>
+                    <Chip
+                      label={urgencyLevel[urgency]}
+                      sx={{ backgroundColor: buttonColor, width: "50%" }}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Divider></Divider>
-            </div>
-          );
-        })}
-      </List>
+                <Divider></Divider>
+              </div>
+            );
+          })}
+        </List>
+      </ThemeProvider>
     );
   }
 }

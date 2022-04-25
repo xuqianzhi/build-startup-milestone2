@@ -150,9 +150,9 @@ function DashboardContent(props) {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+            {/* <Grid container spacing={3}> */}
               <DisplayContent></DisplayContent>
-            </Grid>
+            {/* </Grid> */}
           </Container>
         </Box>
       </Box>

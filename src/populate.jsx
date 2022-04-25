@@ -45,6 +45,12 @@ function getRandomElementFromArray(array) {
     return array[generateRandomInteger(0, array.length)];
 }
 
+const requestDescriptions = [
+    "There are some scratches on my table and chair.  Was wondering if I could get a replacement. ",
+    "The outer pane of my window is broken. Some leaves and grime have been sticking on to it. Can this please be fixed? ",
+    "Please help! My toilet water is brown, and the flush mechanism is not working! I even found a rat that came up in the tank in the process. "
+]
+
 const maintenanceItem = {
     "Apartment Interior": ["ceiling", "counter top", "drawer", "paint", "paneling", "pest control", "shelving", "wallpaper"],
     "Appliance": ["cloth dryer", "cloth wash", "cook top", "dishwasher", "disposal", "freezer", "microwave", "refrigerator"],
@@ -61,7 +67,7 @@ async function populateAll() {
     const tenantsId = await populateTenant(buildingsId, 20);
     const landlordsId = await populateLandlord(buildingsId, 3);
     const vendorsId = await populateVendor(3);
-    const requestsId = await populateRequest(8, tenantsId, vendorsId, maintenancesId);
+    const requestsId = await populateRequest(18, tenantsId, vendorsId, maintenancesId);
 
     console.log(`Successfully populated 
         ${maintenancesId.length} maintenances, 
@@ -158,8 +164,9 @@ async function populateRequest(count, tenantsId, vendorsId, maintenancesId) {
             tenantId: getRandomElementFromArray(tenantsId),
             vendorId: getRandomElementFromArray(vendorsId),
             maintenanceId: getRandomElementFromArray(maintenancesId),
-            description: "populated request " + i,
+            description: getRandomElementFromArray(requestDescriptions),
             dateCreated: new Date(),
+            isCompleted: getRandomElementFromArray([true, false]),
             preferTimeWeekday: preferTimeWeekday,
             preferTimeWeekend: preferTimeWeekend,
             scheduledTime: new Date(2022, generateRandomInteger(5, 12), generateRandomInteger(1, 30), generateRandomInteger(0, 24)),

@@ -15,6 +15,8 @@ import { getDoc, setDoc, addDoc, collection, doc } from "firebase/firestore";
 import { auth, db } from "./firebase.js";
 import { populateData } from "./populate";
 
+const building1Id = "UAOvFSgW51PrvvIq30Oi";
+
 const setSignInLocalStorage = (signInType, userEmail, userId) => {
   window.localStorage.setItem("signInType", signInType);
   window.localStorage.setItem("userEmail", userEmail);
@@ -93,14 +95,14 @@ class App extends Component {
         if (signUpType === "tenant") {
           await setDoc(userDoc, {
             email: email,
-            buildingId: "mHCmVHZhqnNKue9uWMCQ", // prototype purpose, all tenant belong to buildling 1
+            buildingId: building1Id, // prototype purpose, all tenant belong to buildling 1
             phoneNumber: generateRandomPhoneNumber(),
             room: generateRandomInteger(100, 10000)
           });
         } else {
           await setDoc(userDoc, {
             email: email,
-            buildings: ["mHCmVHZhqnNKue9uWMCQ"], // prototype purpose, all landlord own buildling 1
+            buildings: [building1Id], // prototype purpose, all landlord own buildling 1
             phoneNumber: generateRandomPhoneNumber(),
           });
         }
