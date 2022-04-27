@@ -12,9 +12,11 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { getDoc, setDoc, addDoc, collection, doc } from "firebase/firestore";
-import { auth, db } from "./firebase.js";
+import { auth, db, app } from "./firebase.js";
 import { populateData } from "./populate";
+import { getPerformance } from "firebase/performance";
 
+const perf = getPerformance(app);
 const building1Id = "UAOvFSgW51PrvvIq30Oi";
 
 const setSignInLocalStorage = (signInType, userEmail, userId) => {
